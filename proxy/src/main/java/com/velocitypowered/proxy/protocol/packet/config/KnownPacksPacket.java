@@ -25,8 +25,9 @@ import com.velocitypowered.proxy.util.except.QuietDecoderException;
 import io.netty.buffer.ByteBuf;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Objects;
+import java.util.List;
 
 public class KnownPacksPacket implements MinecraftPacket {
 
@@ -34,13 +35,13 @@ public class KnownPacksPacket implements MinecraftPacket {
     private static final QuietDecoderException TOO_MANY_PACKS =
         new QuietDecoderException("too many known packs");
 
-    private KnownPack[] packs;
+    private List<KnownPack> packs;
 
   public KnownPacksPacket() {
-    packs = new KnownPack[0];
+    packs = new ArrayList<>();
   }
 
-  public KnownPacksPacket(KnownPack[] packs) {
+  public KnownPacksPacket(List<KnownPack> packs) {
     this.packs = packs;
   }
 
@@ -52,10 +53,10 @@ public class KnownPacksPacket implements MinecraftPacket {
           throw TOO_MANY_PACKS;
         }
 
-        final KnownPack[] packs = new KnownPack[packCount];
+        final List<KnownPack> packs = ProtocolUtils.newList(packCount);
 
         for (int i = 0; i < packCount; i++) {
-            packs[i] = KnownPack.read(buf);
+            packs.add(KnownPack.read(buf));
         }
 
         this.packs = packs;
@@ -64,7 +65,7 @@ public class KnownPacksPacket implements MinecraftPacket {
     @Override
     public void encode(ByteBuf buf, ProtocolUtils.Direction direction,
                        ProtocolVersion protocolVersion) {
-        ProtocolUtils.writeVarInt(buf, packs.length);
+        ProtocolUtils.writeVarInt(buf, packs.size());
 
         for (KnownPack pack : packs) {
             pack.write(buf);
@@ -76,14 +77,14 @@ public class KnownPacksPacket implements MinecraftPacket {
         return handler.handle(this);
     }
 
-  public KnownPack[] getPacks() {
+  public List<KnownPack> getPacks() {
     return packs;
   }
 
   @Override
   public String toString() {
     return "KnownPacksPacket{" +
-        "packs=" + Arrays.toString(packs) +
+        "packs=" + packs +
         '}';
   }
 
