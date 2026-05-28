@@ -202,18 +202,21 @@ public class VelocityServer implements ProxyServer, ForwardingAudience {
     Package pkg = VelocityServer.class.getPackage();
     String implName;
     String implVersion;
+    String specVersion;
     String implVendor;
     if (pkg != null) {
       implName = MoreObjects.firstNonNull(pkg.getImplementationTitle(), "Velocity");
       implVersion = MoreObjects.firstNonNull(pkg.getImplementationVersion(), "<unknown>");
+      specVersion = MoreObjects.firstNonNull(pkg.getSpecificationVersion(), "<unknown>");
       implVendor = MoreObjects.firstNonNull(pkg.getImplementationVendor(), "Velocity Contributors");
     } else {
       implName = "Velocity";
       implVersion = "<unknown>";
+      specVersion = "<unknown>";
       implVendor = "Velocity Contributors";
     }
 
-    return new ProxyVersion(implName, implVendor, implVersion);
+    return new ProxyVersion(implName, implVendor, implVersion, specVersion);
   }
 
   private VelocityPluginContainer createVirtualPlugin() {
