@@ -19,6 +19,7 @@ public final class ProxyVersion {
   private final String name;
   private final String vendor;
   private final String version;
+  private final String specVersion;
 
   /**
    * Creates a new {@link ProxyVersion} instance.
@@ -27,10 +28,11 @@ public final class ProxyVersion {
    * @param vendor the vendor for the proxy implementation
    * @param version the version for the proxy implementation
    */
-  public ProxyVersion(String name, String vendor, String version) {
+  public ProxyVersion(String name, String vendor, String version, String specVersion) {
     this.name = Preconditions.checkNotNull(name, "name");
     this.vendor = Preconditions.checkNotNull(vendor, "vendor");
     this.version = Preconditions.checkNotNull(version, "version");
+    this.specVersion = Preconditions.checkNotNull(specVersion, "specVersion");
   }
 
   public String getName() {
@@ -45,6 +47,10 @@ public final class ProxyVersion {
     return version;
   }
 
+  public String getSpecVersion() {
+    return specVersion;
+  }
+
   @Override
   public boolean equals(@Nullable Object o) {
     if (this == o) {
@@ -56,12 +62,13 @@ public final class ProxyVersion {
     ProxyVersion that = (ProxyVersion) o;
     return Objects.equals(name, that.name)
         && Objects.equals(vendor, that.vendor)
-        && Objects.equals(version, that.version);
+        && Objects.equals(version, that.version)
+        && Objects.equals(specVersion, that.specVersion);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, vendor, version);
+    return Objects.hash(name, vendor, version, specVersion);
   }
 
   @Override
@@ -70,6 +77,7 @@ public final class ProxyVersion {
         + "name='" + name + '\''
         + ", vendor='" + vendor + '\''
         + ", version='" + version + '\''
+        + ", specVersion='" + specVersion + '\''
         + '}';
   }
 }

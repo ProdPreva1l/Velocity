@@ -164,8 +164,7 @@ public final class VelocityCommand {
               .content(version.getVersion())
               .decoration(TextDecoration.BOLD, false))
           .hoverEvent(Component.translatable("velocity.command.version-offer-copy-version"))
-          .clickEvent(ClickEvent.copyToClipboard(version.getName() + " "
-              + version.getVersion()))
+          .clickEvent(ClickEvent.openUrl("https://github.com/Sunny-SMP/Velocity/commit/" + version.getSpecVersion()))
           .build();
       final Component copyright = Component
           .translatable("velocity.command.version-copyright",
@@ -178,7 +177,7 @@ public final class VelocityCommand {
       if (version.getName().equals("Velocity")) {
         final TextComponent embellishment = Component.text()
             .append(Component.text()
-                .content("PaperMC")
+                .content("SunnySMP")
                 .color(NamedTextColor.GREEN)
                 .clickEvent(ClickEvent.openUrl(VelocityServer.VELOCITY_URL))
                 .build())
@@ -188,7 +187,7 @@ public final class VelocityCommand {
                 .color(NamedTextColor.GREEN)
                 .decoration(TextDecoration.UNDERLINED, true)
                 .clickEvent(ClickEvent.openUrl(
-                    "https://github.com/PaperMC/Velocity"))
+                    "https://github.com/Sunny-SMP/Velocity"))
                 .build())
             .build();
         source.sendMessage(embellishment);
