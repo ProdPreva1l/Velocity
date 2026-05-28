@@ -2,22 +2,64 @@
 # For more information see: https://docs.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
 
 name: Java CI with Gradle
-on: [push, pull_request]
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "test/remove-reconfig"
 
 jobs:
-  build:
-    runs-on: ubuntu-24.04
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v6
-      with:
-        persist-credentials: false
-    - name: Set up Gradle
-      uses: gradle/actions/setup-gradle@v5
-    - name: Set up JDK 21
-      uses: actions/setup-java@v5
-      with:
-        java-version: 21
-        distribution: 'zulu'
-    - name: Build with Gradle
-      run: ./gradlew build
+      - name: Checkout sources
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Set up JDK 26
+        uses: actions/setup-java@v5
+        with:
+          java-version: '26'
+          distribution: 'temurin'
+
+      - uses: gradle/actions/wrapper-validation@v6
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-read-only: ${{ !startsWith(github.ref, 'refs/heads/test/remove-reconfig') || github.event_name == 'pull_request' }}
+          dependency-graph: disabled
+          dependency-graph-continue-on-failure: true
+          add-job-summary-as-pr-comment: on-failure
+          build-scan-publish: false
+          build-scan-terms-of-use-url: "https://gradle.com/help/legal-terms-of-use"
+          build-scan-terms-of-use-agree: "yes"
+
+      - name: "cache project local caches"
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-project-local-gradle-caches-${{ hashFiles('**/libs.versions.toml', '**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-project-local-gradle-caches-
+
+      - name: Publish with Gradle
+        env:
+          # we cant use github secrets in private repos without paying :( - preva1l
+          # idiot, repo secrets exist too babes
+          ORG_GRADLE_PROJECT_SunnyInfraUsername: ${{ secrets.REPO_USERNAME }}
+          ORG_GRADLE_PROJECT_SunnyInfraPassword: ${{ secrets.REPO_PASSWORD }}
+        run: ./gradlew publishAllPublicationsToSunnyInfraRepository --no-configuration-cache
