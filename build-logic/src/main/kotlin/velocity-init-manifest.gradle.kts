@@ -32,5 +32,6 @@ tasks.withType<Jar> {
                 archiveVersion.get()
             }
         attributes["Implementation-Version"] = velocityHumanVersion
+        attributes["Specification-Version"] = currentShortRevision
     }
 }
