@@ -32,6 +32,7 @@ tasks.withType<Jar> {
                 archiveVersion.get()
             }
         attributes["Implementation-Version"] = velocityHumanVersion
+        attributes["Specification-Version"] = currentShortRevision
         attributes["Enable-Native-Access"] = "ALL-UNNAMED"
     }
 }
