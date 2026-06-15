@@ -15,3 +15,9 @@ spotless {
         licenseHeaderFile(rootProject.file("../HEADER.txt"))
     }
 }
+
+java {
+  toolchain {
+    languageVersion.set(JavaLanguageVersion.of(21))
+  }
+}
